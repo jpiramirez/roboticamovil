@@ -1,5 +1,10 @@
-ul = 2.0;
-ur = 1.4;
+% DDR simulation tracing a curve
+% (c) Universidad de Guanajuato 2019
+% Author: Juan-Pablo Ramirez-Paredes
+%         <jpi.ramirez@ugto.mx>
+% Robotica Movil
+ul = -2.0;
+ur = 2.0;
 r = 0.1;
 L = 0.5;
 
