@@ -3,10 +3,12 @@
 % Author: Juan-Pablo Ramirez-Paredes
 %         <jpi.ramirez@ugto.mx>
 % Robotica Movil
-ul = -2.0;
-ur = 2.0;
 r = 0.1;
 L = 0.5;
+v = 0.4;
+omega = 0;
+ur = v/r + L*omega/(2*r);
+ul = v/r - L*omega/(2*r);
 
 [t, y] = ode45(@(t, x) car(x, r, L, ur, ul), [0 10], [0 0 0]');
 

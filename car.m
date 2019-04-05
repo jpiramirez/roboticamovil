@@ -1,4 +1,4 @@
-% Ackermann steering car simulation
+% Differential steering car simulation
 % (c) Universidad de Guanajuato 2019
 % Author: Juan-Pablo Ramirez-Paredes
 %         <jpi.ramirez@ugto.mx>
