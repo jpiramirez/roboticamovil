@@ -99,8 +99,11 @@ while time.time()-t < 60:
     uread = []
     ustate = []
     upt = []
-    for i in range(0,16,4):
+    for i in range(16):
        err, state, point, detectedObj, detectedSurfNormVec = vrep.simxReadProximitySensor(clientID, usensor[i], vrep.simx_opmode_buffer)
+       print(detectedObj)
+       ret, objpos = vrep.simxGetObjectPosition(clientID, detectedObj, -1, vrep.simx_opmode_blocking)
+       print(objpos)
        uread.append(np.linalg.norm(point))
        upt.append(point)
        ustate.append(state)
