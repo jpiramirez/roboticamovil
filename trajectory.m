@@ -39,6 +39,9 @@ p0 = P;
 p1 = [0; -1];
 p2 = [-1; 0];
 p3 = [0; 1];
+r0 = 0;
+r1 = pi/4;
+r2 = pi/2;
 
 % p0 to p1
 % First, x dimension
@@ -73,6 +76,23 @@ sddotcoef = scoef(1:4)'.*[20 12 6 2];
 y = polyval(scoef, t);
 ydot = polyval(sdotcoef, t);
 yddot = polyval(sddotcoef, t);
+
+% Now for rho
+ss = r0;
+sf = r1;
+sdots = 0;
+sdotf = 0;
+sddots = 0;
+sddotf = 0;
+bcond = [ss sf sdots sdotf sddots sddotf]';
+A = S(ts,tf);
+scoef = A\bcond;
+sdotcoef = scoef(1:5)'.*[5 4 3 2 1];
+sddotcoef = scoef(1:4)'.*[20 12 6 2];
+rho = polyval(scoef, t);
+rhodot = polyval(sdotcoef, t);
+rhoddot = polyval(sddotcoef, t);
+
 % p1 to p2
 % X
 ss = p1(1);
@@ -106,6 +126,24 @@ t = linspace(tf, 2*tf, 100);
 y = [y polyval(scoef, t)];
 ydot = [ydot polyval(sdotcoef, t)];
 yddot = [yddot polyval(sddotcoef, t)];
+
+% Y
+ss = r1;
+sf = r2;
+sdots = 0;
+sdotf = 0;
+sddots = 0;
+sddotf = 0;
+bcond = [ss sf sdots sdotf sddots sddotf]';
+A = S(tf,2*tf);
+scoef = A\bcond;
+sdotcoef = scoef(1:5)'.*[5 4 3 2 1];
+sddotcoef = scoef(1:4)'.*[20 12 6 2];
+t = linspace(tf, 2*tf, 100);
+rho = [rho polyval(scoef, t)];
+rhodot = [rhodot polyval(sdotcoef, t)];
+rhoddot = [rhoddot polyval(sddotcoef, t)];
+
 tg = [tg t];
 
 subplot(3,1,1)
@@ -115,6 +153,21 @@ plot(tg, xdot, tg, ydot)
 subplot(3,1,3)
 plot(tg, xddot, tg, yddot)
 
+tform = SE2(0.5, -0.3, -pi/2);
+sensor = zeros(3,3,200);
 for i=1:200
-    pos(:,:,i) = SE2(x(i), y(i), 0);
+    pos(:,:,i) = SE2(x(i), y(i), rho(i));
+    sensor(:,:,i) = pos(:,:,i)*tform.T;
+end
+
+figure
+ax = gca;
+hold on;
+axis([-3 3 -3 3]);
+for i=1:200
+    trplot2(pos(:,:,i), 'color', 'b');
+    trplot2(sensor(:,:,i), 'color', 'r');
+    axis equal
+    pause(0.05)
+    cla
 end
