@@ -1,10 +1,17 @@
+"""
+Trajectory generation based on b-spline curves
+
+Author: Juan-Pablo Ramirez-Paredes <jpi.ramirez@ugto.mx>
+Mobile Robotics course, University of Guanajuato (2020)
+"""
+
 import numpy as np
 import scipy.interpolate as spi
 import matplotlib.pyplot as plt
 
 ttime = 10
 xarr = np.array([0,1,2,3])
-yarr = np.array([0,2,2.5,3])
+yarr = np.array([0,2,1,3])
 tarr = ttime*xarr/xarr[-1]
   
 tnew = np.linspace(0, 10, 100)
