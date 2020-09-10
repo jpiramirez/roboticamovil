@@ -1,3 +1,9 @@
+"""
+Demonstration of a Python-CoppeliaSim connection using a Pioneer 3dx simulation
+
+Author: Juan-Pablo Ramirez-Paredes <jpi.ramirez@ugto.mx>
+Mobile Robotics course, University of Guanajuato (2020)
+"""
 import numpy as np
 import time
 import math as m
