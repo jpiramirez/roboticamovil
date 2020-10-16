@@ -8,7 +8,7 @@ Mobile Robotics course, University of Guanajuato (2020)
 import numpy as np
 import time
 import math as m
-import vrep # access all the VREP elements
+import sim as vrep # access all the VREP elements
 
 def angdiff(t1, t2):
     """
@@ -86,7 +86,7 @@ while errp > 0.1:
     errf = vrep.simxSetJointTargetVelocity(clientID, motorR, ur, vrep.simx_opmode_streaming)
     #time.sleep(0.1)
 
-for i in range(100):
+for i in range(10):
     errf = vrep.simxSetJointTargetVelocity(clientID, motorL, 0, vrep.simx_opmode_streaming)
     errf = vrep.simxSetJointTargetVelocity(clientID, motorR, 0, vrep.simx_opmode_streaming)
     #time.sleep(0.1)
