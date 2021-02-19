@@ -10,9 +10,9 @@ import scipy.interpolate as spi
 import matplotlib.pyplot as plt
 
 ttime = 10
-xarr = np.array([0,1,2,3])
+xarr = np.array([0,3,2,3])
 yarr = np.array([0,2,1,3])
-tarr = ttime*xarr/xarr[-1]
+tarr = np.linspace(0, 10, xarr.shape[0])
   
 tnew = np.linspace(0, 10, 100)
 xc = spi.splrep(tarr, xarr, s=0)
