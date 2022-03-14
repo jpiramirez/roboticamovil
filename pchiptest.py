@@ -14,10 +14,13 @@ xarr = np.random.randint(0, 4, (5,))
 yarr = np.random.randint(0, 4, (5,))
 tarr = np.linspace(0, 10, xarr.shape[0])
   
-tnew = np.linspace(0, 10, 100)
+tnew = np.linspace(0, 10, 200)
 
+#The next two commented lines show how to call the PCHIP interpolator
+#in a simplified manner:
 #xnew = spi.pchip_interpolate(tarr, xarr, tnew)
 #ynew = spi.pchip_interpolate(tarr, yarr, tnew)
+
 pcix = spi.PchipInterpolator(tarr, xarr)
 pciy = spi.PchipInterpolator(tarr, yarr)
 
