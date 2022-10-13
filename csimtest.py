@@ -34,16 +34,16 @@ for i in range(16):
     usensor.append(s)
 
 # Sensor initialization
-#for i in range(16):
-#    err, state, point, detectedObj, detectedSurfNormVec = sim.simxReadProximitySensor(clientID, usensor[i], sim.simx_opmode_streaming)
+for i in range(16):
+    err, state, point, detectedObj, detectedSurfNormVec = sim.simxReadProximitySensor(clientID, usensor[i], sim.simx_opmode_streaming)
 
 
 t = time.time()
 iter = 0
 while (time.time()-t) < 3:
-    uRight, uLeft = v2u(0.5, 3.1415/12.0, 0.09, 0.33)
+    #uRight, uLeft = v2u(0.5, 3.1415/12.0, 0.09, 0.33)
     err = sim.simxSetJointTargetVelocity(clientID, motorL, 1, sim.simx_opmode_streaming)
-    err = sim.simxSetJointTargetVelocity(clientID, motorR, 0, sim.simx_opmode_streaming)
+    err = sim.simxSetJointTargetVelocity(clientID, motorR, 1, sim.simx_opmode_streaming)
     smeasure = []
     for i in range(16):
         err, state, point, detectedObj, detectedSurfNormVec = sim.simxReadProximitySensor(clientID, usensor[i], sim.simx_opmode_buffer)

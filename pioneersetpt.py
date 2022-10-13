@@ -2,13 +2,18 @@
 Robot set-point control (regulation) using a Pioneer p3dx from CoppeliaSim
 
 Author: Juan-Pablo Ramirez-Paredes <jpi.ramirez@ugto.mx>
-Mobile Robotics course, University of Guanajuato (2020)
+Mobile Robotics course, University of Guanajuato (2020-2022)
 """
 
 import numpy as np
 import time
 import math as m
-import sim as vrep # access all the VREP elements
+import sim # access all the sim elements
+
+def v2u(v, omega, r, L):
+    ur = v/r + L*omega/(2*r)
+    ul = v/r - L*omega/(2*r)
+    return ur, ul
 
 def angdiff(t1, t2):
     """
@@ -21,8 +26,8 @@ def angdiff(t1, t2):
     return m.copysign(angmag, angdir)
 
 
-vrep.simxFinish(-1) # just in case, close all opened connections
-clientID=vrep.simxStart('127.0.0.1',-1,True,True,5000,5) # start a connection
+sim.simxFinish(-1) # just in case, close all opened connections
+clientID=sim.simxStart('127.0.0.1',-1,True,True,5000,5) # start a connection
 if clientID!=-1:
 	print ('Connected to remote API server')
 else:
@@ -30,39 +35,29 @@ else:
 	sys.exit("No connection")
 
 # Getting handles for the motors and robot
-err, motorL = vrep.simxGetObjectHandle(clientID, 'Pioneer_p3dx_leftMotor', vrep.simx_opmode_blocking)
-err, motorR = vrep.simxGetObjectHandle(clientID, 'Pioneer_p3dx_rightMotor', vrep.simx_opmode_blocking)
-err, robot = vrep.simxGetObjectHandle(clientID, 'Pioneer_p3dx', vrep.simx_opmode_blocking)
+err, motorL = sim.simxGetObjectHandle(clientID, '/PioneerP3DX/leftMotor', sim.simx_opmode_blocking)
+err, motorR = sim.simxGetObjectHandle(clientID, '/PioneerP3DX/rightMotor', sim.simx_opmode_blocking)
+err, robot = sim.simxGetObjectHandle(clientID, '/PioneerP3DX', sim.simx_opmode_blocking)
 
-# Assigning handles to the ultrasonic sensors
-usensor = []
-for i in range(1,17):
-    err, s = vrep.simxGetObjectHandle(clientID, 'Pioneer_p3dx_ultrasonicSensor'+str(i), vrep.simx_opmode_blocking)
-    usensor.append(s)
-
-# Sensor initialization
-for i in range(16):
-    err, state, point, detectedObj, detectedSurfNormVec = vrep.simxReadProximitySensor(clientID, usensor[i], vrep.simx_opmode_streaming)
-
-ret, carpos = vrep.simxGetObjectPosition(clientID, robot, -1, vrep.simx_opmode_streaming)
-ret, carrot = vrep.simxGetObjectOrientation(clientID, robot, -1, vrep.simx_opmode_streaming)
+ret, carpos = sim.simxGetObjectPosition(clientID, robot, -1, sim.simx_opmode_streaming)
+ret, carrot = sim.simxGetObjectOrientation(clientID, robot, -1, sim.simx_opmode_streaming)
 
 # Controller gains (linear and heading)
-Kv = 0.5
-Kh = 2.5
+Kv = 0.3
+Kh = 0.8
 
 # xd and yd are the coordinates of the desired setpoint
-xd = -2
-yd = 0
+xd = 1
+yd = 1
 
 hd = 0
 r = 0.5*0.195
 L = 0.311
-errp = 10
+errp = 1000
 
 while errp > 0.1:
-    ret, carpos = vrep.simxGetObjectPosition(clientID, robot, -1, vrep.simx_opmode_blocking)
-    ret, carrot = vrep.simxGetObjectOrientation(clientID, robot, -1, vrep.simx_opmode_blocking)
+    ret, carpos = sim.simxGetObjectPosition(clientID, robot, -1, sim.simx_opmode_blocking)
+    ret, carrot = sim.simxGetObjectOrientation(clientID, robot, -1, sim.simx_opmode_blocking)
     errp = m.sqrt((xd-carpos[0])**2 + (yd-carpos[1])**2)
     angd = m.atan2(yd-carpos[1], xd-carpos[0])
     errh = angdiff(carrot[2], angd)
@@ -79,16 +74,14 @@ while errp > 0.1:
     v = Kv*errp
     omega = Kh*errh
 
-
-    ul = v/r - L*omega/(2*r)
-    ur = v/r + L*omega/(2*r)
-    errf = vrep.simxSetJointTargetVelocity(clientID, motorL, ul, vrep.simx_opmode_streaming)
-    errf = vrep.simxSetJointTargetVelocity(clientID, motorR, ur, vrep.simx_opmode_streaming)
+    ur, ul = v2u(v, omega, r, L)
+    errf = sim.simxSetJointTargetVelocity(clientID, motorL, ul, sim.simx_opmode_oneshot)
+    errf = sim.simxSetJointTargetVelocity(clientID, motorR, ur, sim.simx_opmode_oneshot)
     #time.sleep(0.1)
 
 for i in range(10):
-    errf = vrep.simxSetJointTargetVelocity(clientID, motorL, 0, vrep.simx_opmode_streaming)
-    errf = vrep.simxSetJointTargetVelocity(clientID, motorR, 0, vrep.simx_opmode_streaming)
-    #time.sleep(0.1)
+    errf = sim.simxSetJointTargetVelocity(clientID, motorL, 0, sim.simx_opmode_oneshot)
+    errf = sim.simxSetJointTargetVelocity(clientID, motorR, 0, sim.simx_opmode_oneshot)
+    time.sleep(0.05)
     
-vrep.simxStopSimulation(clientID, vrep.simx_opmode_oneshot)
+sim.simxStopSimulation(clientID, sim.simx_opmode_oneshot)
