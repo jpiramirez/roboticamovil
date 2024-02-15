@@ -1,7 +1,7 @@
 import time
 import math as m
 
-from zmqRemoteApi import RemoteAPIClient
+from coppeliasim_zmqremoteapi_client import RemoteAPIClient
 
 def v2u(v, omega, r, L):
     ur = v/r + L*omega/(2*r)
@@ -29,7 +29,7 @@ robot = sim.getObject("/PioneerP3DX")
 
 sim.startSimulation()
 
-xd = -2
+xd = 0
 yd = 0
 
 Kv = 0.3
@@ -51,10 +51,9 @@ while errp > 0.1:
     omega = Kh*errh
 
     ur, ul = v2u(v, omega, r, L)
-    errf = sim.setJointTargetVelocity(motorL, ul)
-    errf = sim.setJointTargetVelocity(motorR, ur)
-    print(errf)
+    sim.setJointTargetVelocity(motorL, ul)
+    sim.setJointTargetVelocity(motorR, ur)
 
-time.sleep(1)
+#time.sleep(1)
 
 sim.stopSimulation()
