@@ -3,13 +3,13 @@ Test for CoppeliaSim using the Pioneer pd3x robot (ZeroMQ API)
 Proximity sensor reading.
 
 Author: Juan-Pablo Ramirez-Paredes <jpi.ramirez@ugto.mx>
-Mobile Robotics course, University of Guanajuato (2023)
+Mobile Robotics course, University of Guanajuato (2024)
 """
 
 import time
 import math as m
 
-from zmqRemoteApi import RemoteAPIClient
+from coppeliasim_zmqremoteapi_client import RemoteAPIClient
 
 def v2u(v, omega, r, L):
     ur = v/r + L*omega/(2*r)
